@@ -4,8 +4,6 @@ const dbConnection = new Sequelize(
   "postgres://localhost:5432/moviewatchlist"
 );
 
-module.exports = dbConnection;
-
 /*
   Movie model
     - title(not null);
@@ -47,3 +45,8 @@ const Genre = dbConnection.define("genre", {
 Movie.belongsToMany(Genre, { through: "movies_genres" });
 Genre.belongsToMany(Movie, { through: "movies_genres" });
 
+module.exports = {
+  dbConnection: dbConnection,
+  Movie: Movie,
+  Genre: Genre
+}
