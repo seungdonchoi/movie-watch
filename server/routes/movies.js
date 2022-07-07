@@ -39,8 +39,42 @@ router.get("/add-movie", async (req, res) => {
   </html>`)
 })
 
-router.get('/', (req, res) => {
-  res.send(`Pretend this is a movie form`)
+router.get('/', async (req, res, next) => {
+  try {
+    const movies = await Movie.findAll({
+      include: [Genre],
+      order: [
+        ["title", "ASC"]
+      ]
+    })
+    res.send(
+      `
+        <!DOCTYPE html>
+        <html>
+          <head><title>Movie List</title></head>
+          <body>
+            <h1>Movie List</h1>
+            <ul>
+            ${movies.map((movie) => {
+              return `
+              <li>
+                <h2>${movie.title}</h2>
+                ${movie.imdbLink ? `<a taget="_blank" href="${movie.imdbLink}">IMDB</a>` : ""}
+                <ul>
+                  ${movie.genres.map((genre) => {
+                    return `<li>${genre.name}</li>`
+                  }).join("")}
+                </ul>
+              </li>`
+            }).join("")}
+            </ul>
+          </body>
+        </html>
+      `
+    )
+  } catch (error) {
+    next(error)
+  }
 })
 
 router.post('/', async (req, res, next) => {
