@@ -40,13 +40,40 @@ router.get("/add-movie", async (req, res) => {
 })
 
 router.get('/', async (req, res, next) => {
+  const onlyUnwatched = req.query.unwatched === '1';
+  const whereClause = {};
+  const genreName = req.query.genre;
+  if (onlyUnwatched === true) {
+    whereClause.watched = false;
+  }
   try {
-    const movies = await Movie.findAll({
-      include: [Genre],
-      order: [
-        ["title", "ASC"]
-      ]
-    })
+    let movies;
+    if (genreName) {
+      const specificGenre = await Genre.findOne({
+        where: {
+          name: genreName
+        }
+      })
+      if (!genreName) {
+        res.status(404).send('Unknown Genre');
+        return;
+      }
+      movies = await specificGenre.getMovies({
+        include: [Genre],
+        order: [
+          ['title', 'ASC']
+        ],
+        where: whereClause
+      });
+    } else {
+      movies = await Movie.findAll({
+        include: [Genre],
+        order: [
+          ["title", "ASC"]
+        ],
+        where: whereClause
+      })
+    }
     res.send(
       `
         <!DOCTYPE html>
@@ -55,6 +82,9 @@ router.get('/', async (req, res, next) => {
           <link rel="stylesheet" type="text/css" href="/movie-list-stylesheet.css" />
           <body>
             <h1>Movie List</h1>
+            <nav>
+              <a href="/movies?unwatched=1">Only Unwatched</a>
+            </nav>
             <ul>
             ${movies.map((movie) => {
               return `
@@ -63,7 +93,7 @@ router.get('/', async (req, res, next) => {
                 ${movie.imdbLink ? `<a taget="_blank" href="${movie.imdbLink}">IMDB</a>` : ""}
                 <ul>
                   ${movie.genres.map((genre) => {
-                    return `<li>${genre.name}</li>`
+                    return `<li><a href="/movies?genre=${genre.name}">${genre.name}</a></li>`
                   }).join("")}
                 </ul>
                 ${movie.watched === false ? `<a href="/movies/${movie.id}/mark-watched">I watched this!</a>` : ""}
@@ -86,6 +116,7 @@ router.get('/:movieId/mark-watched', async (req, res, next) => {
     const theMovie = await Movie.findByPk(id);
     if (!theMovie) {
       res.send('No movie with that id');
+      return;
     }
     theMovie.watched = true;
     await theMovie.save();
