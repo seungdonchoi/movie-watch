@@ -15,7 +15,7 @@ const startServer = async () => {
 
 startServer();
 
-//Matches any URL for a GET request to a possible file in the public directory 
+//Matches any URL for a GET request to a possible file in the public directory
 app.use(express.static(__dirname + '/public'))
 
 //Start of all middleware
@@ -26,6 +26,19 @@ app.use("/genre", genresRouter);
 app.use("/movies", moviesRouter);
 
 app.get("/", (req, res) => {
-  res.send('Hello')
+  res.send(
+    `
+      <!DOCTYPE html>
+      <head>
+        <title>
+          Movie Watchlist App
+        </title>
+      </head>
+      <body>
+        <div id="react-goes-here"></div>
+        <script src="/bundle.js"></script>
+      </body>
+    `
+  )
 })
 
