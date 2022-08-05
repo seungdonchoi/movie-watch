@@ -30,9 +30,9 @@ app.get("/", (req, res) => {
     `
       <!DOCTYPE html>
       <head>
-        <title>
-          Movie Watchlist App
-        </title>
+        <title>Movie Watchlist App</title>
+        <link rel="stylesheet" type="text/css" href="/base-styling.css" />
+        <link rel="stylesheet" type="text/css" href="/movie-list-stylesheet.css" />
       </head>
       <body>
         <div id="react-goes-here"></div>

@@ -4,8 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon server/index.js",
+    "start": "nodemon --watch server --ignore server/public server/index.js",
     "seed": "node server/db/seed.js",
+    "watch": "webpack --watch",
     "build": "webpack"
   },
   "keywords": [],

@@ -1,17 +1,20 @@
 // import React from 'react';
 // import ReactDOM from 'react-dom';
-
+// import App from './components/App'
 // ReactDOM.render(
-//   <h1>Hello</h1>,
+//   <App />,
 //   document.querySelector('#react-goes-here')
 // )
 
 import React from 'react';
 import {createRoot} from 'react-dom/client';
+import App from './components/App.js';
 
 const rootElement = document.getElementById('react-goes-here');
 const root = createRoot(rootElement);
 
 root.render(
-  <h1>Hello!</h1>,
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>
 )
